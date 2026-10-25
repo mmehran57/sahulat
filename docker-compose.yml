@@ -1,0 +1,25 @@
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: sahulat
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5434:5432"
+
+  app:
+    build: .                        # build using the Dockerfile in this folder
+    env_file: .env                  # load DB_PASSWORD etc. into  the container
+    environment:
+      DB_HOST: db
+    volumes:
+    - ./app:/code/app
+    - ./data:/code/data
+    depends_on:
+      - db
+
+volumes:
+  pgdata:
